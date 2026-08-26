@@ -178,7 +178,7 @@ with st.form("loan_form"):
     st.markdown('<div class="section-card"><div class="section-title">💼 Financial Background</div>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
-        person_income = st.number_input("Annual Income ($)", min_value=1000, max_value=1000000, value=60000, step=1000)
+        person_income = st.number_input("Annual Income (PKR)", min_value=1000, max_value=1000000, value=60000, step=1000)
     with c2:
         person_emp_exp = st.number_input("Employment Experience (yrs)", min_value=0, max_value=50, value=3, step=1)
     with c3:
