@@ -20,6 +20,8 @@ st.markdown("""
         --card-border: rgba(99, 102, 241, 0.18);
         --accent-a: #6366f1;
         --accent-b: #8b5cf6;
+        --header-a: #f59e0b;
+        --header-b: #ec4899;
         --muted-text: rgba(120, 120, 140, 0.9);
         --approve-bg: rgba(16, 185, 129, 0.10);
         --approve-border: rgba(16, 185, 129, 0.45);
@@ -54,7 +56,7 @@ st.markdown("""
     .app-header h1 {
         font-size: 2.1rem;
         font-weight: 700;
-        background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+        background: linear-gradient(90deg, var(--header-a), var(--header-b));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.2rem;
@@ -145,26 +147,24 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 # ---------- Load model ----------
 @st.cache_resource
 def load_pipeline():
     return joblib.load("loan model.pkl")
-
-
 
 pipe = load_pipeline()
 
 # ---------- Header ----------
 st.markdown("""
 <div class="app-header">
-    <h1>💳 Loan Approval Predictor</h1>
+    <h1>Loan Approval Predictor</h1>
     <p>Fill in the applicant details below to check loan eligibility instantly</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ---------- Form ----------
 with st.form("loan_form"):
+
     st.markdown('<div class="section-card"><div class="section-title">👤 Personal Details</div>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -175,8 +175,7 @@ with st.form("loan_form"):
         person_education = st.selectbox("Education", ["High School", "Associate", "Bachelor", "Master", "Doctorate"])
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-card"><div class="section-title">💼 Financial Background</div>',
-                unsafe_allow_html=True)
+    st.markdown('<div class="section-card"><div class="section-title">💼 Financial Background</div>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
         person_income = st.number_input("Annual Income ($)", min_value=1000, max_value=1000000, value=60000, step=1000)
@@ -188,8 +187,7 @@ with st.form("loan_form"):
     with c1:
         credit_score = st.number_input("Credit Score", min_value=300, max_value=850, value=650, step=1)
     with c2:
-        cb_person_cred_hist_length = st.number_input("Credit History Length (yrs)", min_value=0, max_value=40, value=4,
-                                                     step=1)
+        cb_person_cred_hist_length = st.number_input("Credit History Length (yrs)", min_value=0, max_value=40, value=4, step=1)
     previous_loan_defaults_on_file = st.selectbox("Previous Loan Defaults on File", ["No", "Yes"])
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -198,8 +196,7 @@ with st.form("loan_form"):
     with c1:
         loan_amnt = st.number_input("Loan Amount ($)", min_value=500, max_value=100000, value=10000, step=500)
     with c2:
-        loan_intent = st.selectbox("Loan Purpose", ["PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT",
-                                                    "DEBTCONSOLIDATION"])
+        loan_intent = st.selectbox("Loan Purpose", ["PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT", "DEBTCONSOLIDATION"])
     c1, c2 = st.columns(2)
     with c1:
         loan_int_rate = st.number_input("Interest Rate (%)", min_value=1.0, max_value=30.0, value=11.0, step=0.1)
@@ -207,7 +204,7 @@ with st.form("loan_form"):
         loan_percent_income = st.number_input("Loan % of Income", min_value=0.0, max_value=1.0, value=0.15, step=0.01)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    submitted = st.form_submit_button("🔍Loan Status")
+    submitted = st.form_submit_button("🔍 Predict Loan Status")
 
 # ---------- Prediction ----------
 if submitted:
