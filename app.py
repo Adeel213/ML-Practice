@@ -10,17 +10,35 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ---------- Custom CSS ----------
+# ---------- Custom CSS (adapts to light & dark mode) ----------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-    html, body, [class*="css"]  {
-        font-family: 'Poppins', sans-serif;
+    :root {
+        --card-bg: rgba(99, 102, 241, 0.06);
+        --card-border: rgba(99, 102, 241, 0.18);
+        --accent-a: #6366f1;
+        --accent-b: #8b5cf6;
+        --muted-text: rgba(120, 120, 140, 0.9);
+        --approve-bg: rgba(16, 185, 129, 0.10);
+        --approve-border: rgba(16, 185, 129, 0.45);
+        --approve-text: #059669;
+        --reject-bg: rgba(239, 68, 68, 0.10);
+        --reject-border: rgba(239, 68, 68, 0.45);
+        --reject-text: #dc2626;
     }
 
-    .main {
-        background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --muted-text: #94a3b8;
+            --approve-text: #34d399;
+            --reject-text: #f87171;
+        }
+    }
+
+    html, body, [class*="css"]  {
+        font-family: 'Poppins', sans-serif;
     }
 
     .block-container {
@@ -36,20 +54,20 @@ st.markdown("""
     .app-header h1 {
         font-size: 2.1rem;
         font-weight: 700;
-        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.2rem;
     }
     .app-header p {
-        color: #94a3b8;
+        color: var(--muted-text);
         font-size: 0.95rem;
     }
 
     /* Section card */
     .section-card {
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.15);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
         border-radius: 16px;
         padding: 1.3rem 1.5rem 0.6rem 1.5rem;
         margin-bottom: 1.2rem;
@@ -57,7 +75,7 @@ st.markdown("""
     .section-title {
         font-size: 1.0rem;
         font-weight: 600;
-        color: #38bdf8;
+        color: var(--accent-a);
         margin-bottom: 0.6rem;
         display: flex;
         align-items: center;
@@ -66,20 +84,13 @@ st.markdown("""
 
     /* Inputs */
     div[data-baseweb="select"] > div, .stNumberInput input {
-        background-color: rgba(15, 23, 42, 0.7) !important;
         border-radius: 10px !important;
     }
 
-    label {
-        color: #cbd5e1 !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
-    }
-
     /* Predict button */
-    div.stButton > button {
+    div.stButton > button, .stFormSubmitButton > button {
         width: 100%;
-        background: linear-gradient(90deg, #38bdf8, #6366f1);
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
         color: white;
         font-weight: 600;
         font-size: 1.05rem;
@@ -89,43 +100,43 @@ st.markdown("""
         margin-top: 0.6rem;
         transition: transform 0.15s ease;
     }
-    div.stButton > button:hover {
+    div.stButton > button:hover, .stFormSubmitButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(56, 189, 248, 0.35);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
         color: white;
     }
 
     /* Result cards */
     .result-approved {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
-        border: 1px solid rgba(16, 185, 129, 0.4);
+        background: var(--approve-bg);
+        border: 1px solid var(--approve-border);
         border-radius: 16px;
         padding: 1.5rem;
         text-align: center;
         margin-top: 1rem;
     }
     .result-rejected {
-        background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), rgba(248, 113, 113, 0.05));
-        border: 1px solid rgba(248, 113, 113, 0.4);
+        background: var(--reject-bg);
+        border: 1px solid var(--reject-border);
         border-radius: 16px;
         padding: 1.5rem;
         text-align: center;
         margin-top: 1rem;
     }
     .result-title-approved {
-        color: #34d399;
+        color: var(--approve-text);
         font-size: 1.6rem;
         font-weight: 700;
         margin-bottom: 0.2rem;
     }
     .result-title-rejected {
-        color: #f87171;
+        color: var(--reject-text);
         font-size: 1.6rem;
         font-weight: 700;
         margin-bottom: 0.2rem;
     }
     .result-sub {
-        color: #cbd5e1;
+        color: var(--muted-text);
         font-size: 0.95rem;
     }
 
@@ -134,10 +145,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
 # ---------- Load model ----------
 @st.cache_resource
 def load_pipeline():
-    return joblib.load("loan_model.pkl")
+    return joblib.load("loan model.pkl")
+
+
 
 pipe = load_pipeline()
 
@@ -151,7 +165,6 @@ st.markdown("""
 
 # ---------- Form ----------
 with st.form("loan_form"):
-
     st.markdown('<div class="section-card"><div class="section-title">👤 Personal Details</div>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -162,7 +175,8 @@ with st.form("loan_form"):
         person_education = st.selectbox("Education", ["High School", "Associate", "Bachelor", "Master", "Doctorate"])
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-card"><div class="section-title">💼 Financial Background</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-card"><div class="section-title">💼 Financial Background</div>',
+                unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
         person_income = st.number_input("Annual Income ($)", min_value=1000, max_value=1000000, value=60000, step=1000)
@@ -174,7 +188,8 @@ with st.form("loan_form"):
     with c1:
         credit_score = st.number_input("Credit Score", min_value=300, max_value=850, value=650, step=1)
     with c2:
-        cb_person_cred_hist_length = st.number_input("Credit History Length (yrs)", min_value=0, max_value=40, value=4, step=1)
+        cb_person_cred_hist_length = st.number_input("Credit History Length (yrs)", min_value=0, max_value=40, value=4,
+                                                     step=1)
     previous_loan_defaults_on_file = st.selectbox("Previous Loan Defaults on File", ["No", "Yes"])
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -183,7 +198,8 @@ with st.form("loan_form"):
     with c1:
         loan_amnt = st.number_input("Loan Amount ($)", min_value=500, max_value=100000, value=10000, step=500)
     with c2:
-        loan_intent = st.selectbox("Loan Purpose", ["PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT", "DEBTCONSOLIDATION"])
+        loan_intent = st.selectbox("Loan Purpose", ["PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT",
+                                                    "DEBTCONSOLIDATION"])
     c1, c2 = st.columns(2)
     with c1:
         loan_int_rate = st.number_input("Interest Rate (%)", min_value=1.0, max_value=30.0, value=11.0, step=0.1)
@@ -191,7 +207,7 @@ with st.form("loan_form"):
         loan_percent_income = st.number_input("Loan % of Income", min_value=0.0, max_value=1.0, value=0.15, step=0.01)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    submitted = st.form_submit_button("🔍 Predict Loan Status")
+    submitted = st.form_submit_button("🔍Loan Status")
 
 # ---------- Prediction ----------
 if submitted:
@@ -219,14 +235,14 @@ if submitted:
     if prediction == 1:
         st.markdown(f"""
         <div class="result-approved">
-            <div class="result-title-approved">✅ Loan Approved</div>
+            <div class="result-title-approved">Loan Approved</div>
             <div class="result-sub">Approval confidence: <b>{approval_prob:.1f}%</b></div>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
         <div class="result-rejected">
-            <div class="result-title-rejected">❌ Loan Rejected</div>
+            <div class="result-title-rejected">Loan Rejected</div>
             <div class="result-sub">Rejection confidence: <b>{rejection_prob:.1f}%</b></div>
         </div>
         """, unsafe_allow_html=True)
