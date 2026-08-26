@@ -194,7 +194,7 @@ with st.form("loan_form"):
     st.markdown('<div class="section-card"><div class="section-title">🏦 Loan Details</div>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        loan_amnt = st.number_input("Loan Amount ($)", min_value=500, max_value=100000, value=10000, step=500)
+        loan_amnt = st.number_input("Loan Amount (PKR)", min_value=500, max_value=100000, value=10000, step=500)
     with c2:
         loan_intent = st.selectbox("Loan Purpose", ["PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT", "DEBTCONSOLIDATION"])
     c1, c2 = st.columns(2)
